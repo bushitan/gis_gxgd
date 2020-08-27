@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>湖南卫视</title>
+</head>
+<script charset="utf-8"
+    src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&libraries=visualization"></script>
+<style type="text/css">
+    html,
+    body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #container {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body onload="initMap()">
+{{ gis }}
+{{ gis_list }}
+ {% for x in gis_list %}
+     {{ x.name }}
+{% endfor %}
+    <div id="container"></div>
+
+    <script>
+var betterData =
+[
+
+ {% for x in gis_list %}
+    {"count": {{ x.uv }},"lat":22.807833,"lng":108.311462},
+{% endfor %}
+{#{"count":1.1595,"lat":22.807833,"lng":108.311462},#}
+{#{"count":1.113,"lat":24.327077,"lng":109.401855},#}
+{#{"count":1.145,"lat":25.274504,"lng":110.302734},#}
+{#{"count":1.1365,"lat":23.473324,"lng":111.291504},#}
+{#{"count":1.059,"lat":21.493964,"lng":109.105225},#}
+{#{"count":1.214,"lat":21.688057,"lng":108.358154},#}
+{#{"count":1.204,"lat":21.983801,"lng":108.654785},#}
+{#{"count":1.0095,"lat":23.120154,"lng":109.610596},#}
+{#{"count":1.193,"lat":22.66471,"lng":110.181885},#}
+{#{"count":0.912,"lat":23.895883,"lng":106.611328},#}
+{#{"count":0.7365,"lat":24.397133,"lng":111.566162},#}
+{#{"count":0.988,"lat":24.706915,"lng":108.094482},#}
+{#{"count":0.9215,"lat":23.735069,"lng":109.226074},#}
+{#{"count":0.578,"lat":22.390714,"lng":107.380371},#}
+
+]
+
+ var normalData =[
+{"count":0.0665,"lat":22.807833,"lng":108.311462},
+{"count":0.1175,"lat":24.327077,"lng":109.401855},
+{"count":0.114,"lat":25.274504,"lng":110.302734},
+{"count":0.301,"lat":23.473324,"lng":111.291504},
+{"count":0.132,"lat":21.493964,"lng":109.105225},
+{"count":0.136,"lat":21.688057,"lng":108.358154},
+{"count":0.189,"lat":21.983801,"lng":108.654785},
+{"count":0.252,"lat":23.120154,"lng":109.610596},
+{"count":0.2695,"lat":22.66471,"lng":110.181885},
+{"count":0.176,"lat":23.895883,"lng":106.611328},
+{"count":0.4495,"lat":24.397133,"lng":111.566162},
+{"count":0.1495,"lat":24.706915,"lng":108.094482},
+{"count":0.1735,"lat":23.735069,"lng":109.226074},
+{"count":0.3555,"lat":22.390714,"lng":107.380371},
+
+]
+
+        function initMap() {
+            var center = new TMap.LatLng(22.807833, 108.311462);
+
+            //初始化地图
+            var map = new TMap.Map("container", {
+                zoom: 7,//设置地图缩放级别
+                pitch: 45, // 设置地图俯仰角
+                center: center,//设置地图中心点坐标
+                mapStyleId: "style2" //个性化样式
+            });
+
+            //初始化热力图并添加至map图层
+            new TMap.visualization.Heat({
+                max: 2,  // 热力最强阈值
+                min: 0, // 热力最弱阈值
+                height: 400, // 峰值高度
+                radius: 40, // 最大辐射半径
+		gradientColor:{
+			
+				// 0: '#fdfa00', 
+			0: '#14de84',
+			 
+			 0.9: '#E05649', 
+			 //0.4: '#14de84', 
+			 //0.8: '#E9AB1D', 
+			 //0.9: '#E9AB1D', 
+			 //1: '#E05649'
+		}
+            })
+            .addTo(map)
+            .setData(betterData);//设置数据
+
+            //初始化热力图并添加至map图层
+            new TMap.visualization.Heat({
+                max: 2,  // 热力最强阈值
+                min: 0, // 热力最弱阈值
+                height: 400, // 峰值高度
+                radius: 40, // 最大辐射半径
+		gradientColor:{
+				// 0:'#ff0024'
+				0: '#fdfa00', 
+			
+			
+			//0.4: '#14de84', 
+			//0.8: '#E9AB1D', 
+			//0.9: '#E9AB1D', 
+			//1: '#E05649'
+		}
+            })
+            .addTo(map)
+            .setData(normalData);//设置数据
+
+	 // //初始化热力图并添加至map图层
+  //           new TMap.visualization.Heat({
+  //               max: 1300,  // 热力最强阈值
+  //               min: 0, // 热力最弱阈值
+  //               height: 400, // 峰值高度
+  //               radius: 40, // 最大辐射半径
+		// gradientColor:{
+		// 	0:'#ff0024'
+		// 	//0: '#13B06A', 
+		// 	//0.4: '#13B06A', 
+		// 	//0.8: '#E9AB1D', 
+		// 	//0.9: '#E9AB1D', 
+		// 	//1: '#E05649'
+		//     //0.6: "#e53390",
+  //                  // 0.8: "#e53390",
+  //                  // 0.9: "#ffc95a",
+		// }
+  //           })
+  //           .addTo(map)
+  //           .setData(hunanData );//设置数据
+        }
+    </script>
+</body>
+
+</html>
