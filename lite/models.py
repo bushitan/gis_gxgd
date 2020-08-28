@@ -53,6 +53,7 @@ class Address(Base):
     tag =  models.IntegerField( verbose_name=u'区域标签',default=0)
     class Meta:
         verbose_name_plural = verbose_name = u'区域'
+        ordering = ['create_time']
     def __unicode__(self):
         return '%s' % (self.name)
 
@@ -79,6 +80,7 @@ class Broadcast(Base):
 class Episode(Base):
     boadcast = models.ForeignKey(Broadcast, verbose_name=u'所属节目',null=True,blank=True)
     address = models.ForeignKey(Address, verbose_name=u'所属区域',null=True,blank=True)
+    code =  models.IntegerField( verbose_name=u'节目code',default=-1)
     rate =  models.FloatField( verbose_name=u'收视率',default=0)
     uv =  models.IntegerField( verbose_name=u'访问人数',default=0)
     pv =  models.IntegerField( verbose_name=u'访问次数',default=0)

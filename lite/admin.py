@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from .models import *
-
+import json
 admin.site.site_header = u'广西广电网络频道分析平台'
 admin.site.site_title = u'广西广电网络'
 # # Register your models here.
@@ -28,12 +28,40 @@ class ChannelAdmin(admin.ModelAdmin):
 admin.site.register(Channel,ChannelAdmin)
 
 class BroadcastAdmin(admin.ModelAdmin):
-    pass
+
+    actions = ['add_episode']
+    def add_episode(self, request, queryset):
+        # rows_updated = queryset.update(status=3) # queryset参数为选中的Story对象
+        # message_bit = "%s 篇文章" % rows_updated
+        # episode_list = list( queryset[0].episode_list)
+        broadcast = queryset[0]
+        episode_list = json.loads (broadcast.episode_list)
+        address_list = Address.objects.filter( tag=0)
+        # print(address_list)
+        count = 0
+        for  episode in episode_list:
+            for address in address_list:
+                print ( episode)
+                print ( episode['start_time'])
+                e = Episode(
+                    boadcast = broadcast,
+                    address = address,
+                    name =  episode['name'],
+                    code =  episode['code'],
+                    start_time =  episode['start_time'],
+                    end_time =  episode['end_time'],
+                )
+                e.save()
+                count = count + 1
+        self.message_user(request, "已经添加多少条数据。 %s." % count)
+    add_episode.short_description = u'添加剧集数据'
+
 admin.site.register(Broadcast,BroadcastAdmin)
 
 
 class EpisodeAdmin(admin.ModelAdmin):
-    list_display = ('id','channel_name','boadcast','name','uv','pv','rate','address')
+    list_display = ('id','channel_name','boadcast','name','code','uv','pv','rate','address')
+    list_editable = ( 'uv','pv','rate',)
     # 显示频道名称
     def channel_name(self, obj):
         return u'%s' % obj.boadcast.channel.name

@@ -3,6 +3,8 @@
 from django.views.generic import ListView
 from lib.message import *
 # from .action.login import *
+from .action.episode_action import *
+action_episode = ActionEpisode()
 from .models import *
 class Index( ListView):
     template_name = 'index.html'
@@ -21,7 +23,10 @@ class Hunan( ListView):
     def get_context_data(self, **kwargs):
         kwargs['gis'] = 123
         # kwargs['gis_list'] = [1,2,3]
-        kwargs['gis_list'] = Episode.objects.all()
+        # address_list = Address.objects.filter(code=0)
+
+
+        kwargs['gis_list'], kwargs['max'] = action_episode.getCity()
 
         return super(Hunan, self).get_context_data(**kwargs)
 

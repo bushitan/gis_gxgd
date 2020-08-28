@@ -36,7 +36,7 @@ var betterData =
 [
 
  {% for x in gis_list %}
-    {"count": {{ x.uv }},"lat":22.807833,"lng":108.311462},
+    {"count": {{ x.count }},"lat": {{ x.lat }},"lng": {{ x.lng }}},
 {% endfor %}
 {#{"count":1.1595,"lat":22.807833,"lng":108.311462},#}
 {#{"count":1.113,"lat":24.327077,"lng":109.401855},#}
@@ -86,7 +86,7 @@ var betterData =
 
             //初始化热力图并添加至map图层
             new TMap.visualization.Heat({
-                max: 2,  // 热力最强阈值
+                max: {{ max }},  // 热力最强阈值
                 min: 0, // 热力最弱阈值
                 height: 400, // 峰值高度
                 radius: 40, // 最大辐射半径
