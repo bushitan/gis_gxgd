@@ -1,6 +1,7 @@
 #coding:utf-8
 
 from django.views.generic import ListView
+from django.shortcuts import render
 from lib.message import *
 # from .action.login import *
 from .action.episode_action import *
@@ -20,13 +21,18 @@ class Hunan( ListView):
     template_name = 'gis_hunan.html'
     context_object_name = 'article_list'
 
+    broadcast_id = ""
+    def get(self, request, *args, **kwargs):
+        self.broadcast_id = request.GET.get('broadcast_id',"")
+        return super(Hunan, self).get(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         kwargs['gis'] = 123
         # kwargs['gis_list'] = [1,2,3]
         # address_list = Address.objects.filter(code=0)
 
+        kwargs['gis_list'], kwargs['max'], kwargs['min'] = action_episode.getCity(self.broadcast_id)
+        print  (kwargs['gis_list'])
 
-        kwargs['gis_list'], kwargs['max'] = action_episode.getCity()
 
         return super(Hunan, self).get_context_data(**kwargs)
 

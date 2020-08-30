@@ -2,9 +2,12 @@
 
 from django.contrib import admin
 from .models import *
+import random
+
 import json
 admin.site.site_header = u'广西广电网络频道分析平台'
 admin.site.site_title = u'广西广电网络'
+
 # # Register your models here.
 # class MyAdminSite(admin.AdminSite):
 #     site_header = u'好医生运维资源管理系统'  # 此处设置页面显示标题
@@ -30,6 +33,8 @@ admin.site.register(Channel,ChannelAdmin)
 class BroadcastAdmin(admin.ModelAdmin):
 
     actions = ['add_episode']
+
+    # 添加剧集数据
     def add_episode(self, request, queryset):
         # rows_updated = queryset.update(status=3) # queryset参数为选中的Story对象
         # message_bit = "%s 篇文章" % rows_updated
@@ -44,12 +49,13 @@ class BroadcastAdmin(admin.ModelAdmin):
                 print ( episode)
                 print ( episode['start_time'])
                 e = Episode(
-                    boadcast = broadcast,
+                    broadcast = broadcast,
                     address = address,
                     name =  episode['name'],
                     code =  episode['code'],
                     start_time =  episode['start_time'],
                     end_time =  episode['end_time'],
+                    uv = random.randint(100, 900)
                 )
                 e.save()
                 count = count + 1
@@ -60,11 +66,11 @@ admin.site.register(Broadcast,BroadcastAdmin)
 
 
 class EpisodeAdmin(admin.ModelAdmin):
-    list_display = ('id','channel_name','boadcast','name','code','uv','pv','rate','address')
+    list_display = ('id','channel_name','broadcast','name','code','uv','pv','rate','address')
     list_editable = ( 'uv','pv','rate',)
     # 显示频道名称
     def channel_name(self, obj):
-        return u'%s' % obj.boadcast.channel.name
+        return u'%s' % obj.broadcast.channel.name
     channel_name.short_description = u'频道'
 
     actions = ['copy_episode']

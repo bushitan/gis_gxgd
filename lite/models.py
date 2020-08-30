@@ -78,7 +78,7 @@ class Broadcast(Base):
 
 # 剧集
 class Episode(Base):
-    boadcast = models.ForeignKey(Broadcast, verbose_name=u'所属节目',null=True,blank=True)
+    broadcast = models.ForeignKey(Broadcast, verbose_name=u'所属节目',null=True,blank=True)
     address = models.ForeignKey(Address, verbose_name=u'所属区域',null=True,blank=True)
     code =  models.IntegerField( verbose_name=u'节目code',default=-1)
     rate =  models.FloatField( verbose_name=u'收视率',default=0)

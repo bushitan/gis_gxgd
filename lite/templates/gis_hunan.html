@@ -24,11 +24,11 @@
 </style>
 
 <body onload="initMap()">
-{{ gis }}
-{{ gis_list }}
- {% for x in gis_list %}
-     {{ x.name }}
-{% endfor %}
+{#{{ gis }}#}
+{#{{ gis_list }}#}
+{# {% for x in gis_list %}#}
+{#     {{ x.name }}#}
+{#{% endfor %}#}
     <div id="container"></div>
 
     <script>
@@ -87,7 +87,7 @@ var betterData =
             //初始化热力图并添加至map图层
             new TMap.visualization.Heat({
                 max: {{ max }},  // 热力最强阈值
-                min: 0, // 热力最弱阈值
+                min: 300, // 热力最弱阈值
                 height: 400, // 峰值高度
                 radius: 40, // 最大辐射半径
 		gradientColor:{
@@ -105,25 +105,25 @@ var betterData =
             .addTo(map)
             .setData(betterData);//设置数据
 
-            //初始化热力图并添加至map图层
-            new TMap.visualization.Heat({
-                max: 2,  // 热力最强阈值
-                min: 0, // 热力最弱阈值
-                height: 400, // 峰值高度
-                radius: 40, // 最大辐射半径
-		gradientColor:{
-				// 0:'#ff0024'
-				0: '#fdfa00', 
-			
-			
-			//0.4: '#14de84', 
-			//0.8: '#E9AB1D', 
-			//0.9: '#E9AB1D', 
-			//1: '#E05649'
-		}
-            })
-            .addTo(map)
-            .setData(normalData);//设置数据
+{#            //初始化热力图并添加至map图层#}
+{#            new TMap.visualization.Heat({#}
+{#                max: 2,  // 热力最强阈值#}
+{#                min: 0, // 热力最弱阈值#}
+{#                height: 400, // 峰值高度#}
+{#                radius: 40, // 最大辐射半径#}
+{#		gradientColor:{#}
+{#				// 0:'#ff0024'#}
+{#				0: '#fdfa00', #}
+{#			#}
+{#			#}
+{#			//0.4: '#14de84', #}
+{#			//0.8: '#E9AB1D', #}
+{#			//0.9: '#E9AB1D', #}
+{#			//1: '#E05649'#}
+{#		}#}
+{#            })#}
+{#            .addTo(map)#}
+{#            .setData(normalData);//设置数据#}
 
 	 // //初始化热力图并添加至map图层
   //           new TMap.visualization.Heat({
