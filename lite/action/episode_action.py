@@ -3,7 +3,7 @@
 
 from lite.models import *
 from django.db.models import Sum
-
+import json
 
 class ActionEpisode():
 	def __init__(self):
@@ -13,7 +13,7 @@ class ActionEpisode():
 		pass
 
 	# method 根据节目，获取各个地区数据
-	def getCity(self,broadcast_id):
+	def getCityCount(self,broadcast_id=2):
 		# return Address.objects.filter(tag = 0)
 
 		_address_list = Address.objects.filter(tag = 0)
@@ -37,8 +37,30 @@ class ActionEpisode():
 		return _address_data ,_max , _min
 		# pass
 
+	# method 根据节目，获取各个地区数据
+	def getCityList(self,broadcast_id=2):
+		# return Address.objects.filter(tag = 0)
+		broadcast = Broadcast.objects.get(id = broadcast_id)
+		# print( json.loads( broadcast.episode_list) )
+		episode_list = json.loads( broadcast.episode_list)
+
+		_dict = {}
+		for e in episode_list:
+			filter = Episode.objects.filter(broadcast_id = broadcast_id, code = e['code'])
+			_dict[e['code']] = self._filter_2_list(filter)
+		return episode_list,_dict
+
+	def _filter_2_list(self,filter):
+		_list = []
+		for i in filter:
+			_list.append({
+				"count":i.uv,
+				"lat":i.address.latitude,"lng":i.address.longitude
+			})
+		return _list
+
 if __name__  == '__main__':
 	import django
 	django.setup()
 	e= ActionEpisode()
-	print(e.getCity())
+	print(e.getCityList())

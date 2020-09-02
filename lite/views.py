@@ -30,7 +30,8 @@ class Hunan( ListView):
         # kwargs['gis_list'] = [1,2,3]
         # address_list = Address.objects.filter(code=0)
 
-        kwargs['gis_list'], kwargs['max'], kwargs['min'] = action_episode.getCity(self.broadcast_id)
+        kwargs['gis_list'], kwargs['max'], kwargs['min'] = action_episode.getCityCount(self.broadcast_id)
+        kwargs['episode_list'],kwargs['episode_dict'] = action_episode.getCityList(self.broadcast_id)
         print  (kwargs['gis_list'])
 
 

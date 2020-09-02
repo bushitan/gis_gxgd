@@ -3,7 +3,7 @@
 from django.contrib import admin
 from .models import *
 import random
-
+from lib.gxgx_data import *
 import json
 admin.site.site_header = u'广西广电网络频道分析平台'
 admin.site.site_title = u'广西广电网络'
@@ -23,6 +23,8 @@ class UserAdmin(admin.ModelAdmin):
 admin.site.register(User,UserAdmin)
 
 class AddressAdmin(admin.ModelAdmin):
+    list_display = ('id','name','area_code','tag',)
+    list_editable = ( 'area_code',)
     pass
 admin.site.register(Address,AddressAdmin)
 
@@ -36,6 +38,8 @@ class BroadcastAdmin(admin.ModelAdmin):
 
     # 添加剧集数据
     def add_episode(self, request, queryset):
+        gxgd = GXGDData()
+
         # rows_updated = queryset.update(status=3) # queryset参数为选中的Story对象
         # message_bit = "%s 篇文章" % rows_updated
         # episode_list = list( queryset[0].episode_list)
@@ -48,14 +52,23 @@ class BroadcastAdmin(admin.ModelAdmin):
             for address in address_list:
                 print ( episode)
                 print ( episode['start_time'])
+                print ( address.area_code)
+                uv = gxgd.get_stb_paly_num(
+                    areaCode = address.area_code ,
+                    channelCodes =  445,
+                    date = '2020-09-01',
+                    startTime =episode['start_time'],
+                    endTime = episode['end_time'],
+                )
                 e = Episode(
                     broadcast = broadcast,
                     address = address,
                     name =  episode['name'],
                     code =  episode['code'],
-                    start_time =  episode['start_time'],
-                    end_time =  episode['end_time'],
-                    uv = random.randint(100, 900)
+                    start_time ="%s %s" %( episode['date'] , episode['start_time'] ),
+                    end_time ="%s %s" %( episode['date'] , episode['end_time'] ) ,
+                    uv = uv
+                    # uv = 1
                 )
                 e.save()
                 count = count + 1

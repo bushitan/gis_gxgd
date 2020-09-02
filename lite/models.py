@@ -47,6 +47,7 @@ class User(Base):
 
 # 区域
 class Address(Base):
+    area_code = models.CharField(max_length=32, verbose_name=u'STB区域码',default="",null=True,blank=True)
     father = models.ForeignKey('self', verbose_name=u'所属区域',null=True,blank=True)
     latitude =  models.FloatField( verbose_name=u'纬度',default=0,null=True,blank=True)
     longitude =  models.FloatField(  verbose_name=u'经度',default=0,null=True,blank=True)
