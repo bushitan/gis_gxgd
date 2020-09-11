@@ -31,8 +31,12 @@ class GXGDData():
 		self.cookie = r.headers._store['set-cookie'][1].split(";")[0] # 设置cookie
 		# print(res)
 
+
+
+	'''
 	# 获取收视机顶盒数
-	def get_stb_paly_num(self,**kwargs):
+	'''
+	def get_stb_view_num(self,**kwargs):
 		url = 'http://10.1.42.51:18089/StarV2/live/getIndex.do'
 		data = {
 			'areaCode':kwargs['areaCode'] ,
@@ -41,8 +45,8 @@ class GXGDData():
 			'channelCodes':kwargs['channelCodes'] ,
 			'dateRange':'%s:%s' % (kwargs['date'] ,kwargs['date'] ) ,# '2020-09-01:2020-09-01',
 			'timeRange':'%s-%s' % (kwargs['startTime'] ,kwargs['endTime'] ) ,# '00:00:00-23:59:59',
-			'dateInterval': 'f04', # f04按小时 ， f05 按天 ，f06按周，f07按月
-			'indexName':'RTG000',
+			'dateInterval': kwargs['dateInterval'], #'f04', # f04按小时 ， f05 按天 ，f06按周，f07按月
+			'indexName':  kwargs['indexName'], #'RTG000', #'RTG000' 获取收视机顶盒数   'REACH000'顶盒数到达数
 			'currentPage': '1',
 
 
@@ -67,28 +71,35 @@ class GXGDData():
 			# 'currentPage': 1,
 		}
 		res = self._post( url , data)
-		print(res)
-		print(res['contentList'][0]['valueList'][0])
-		print(res['contentList'][0]['valueList'][0]['viewtime'])
-		print(res['contentList'][0]['valueList'][0]['timeLong'])
+		return res
 
-		viewtime = res['contentList'][0]['valueList'][0]['viewtime']
-
-		timeLong = res['contentList'][0]['valueList'][0]['timeLong']
-		play = int (viewtime / timeLong)
-		print (play)
-		return play
+		'''
+			# print(res)
+			# print(res['contentList'][0]['valueList'][0])
+			# print(res['contentList'][0]['valueList'][0]['viewtime'])
+			# print(res['contentList'][0]['valueList'][0]['timeLong'])
+			#
+			# viewtime = res['contentList'][0]['valueList'][0]['viewtime']
+			#
+			# timeLong = res['contentList'][0]['valueList'][0]['timeLong']
+			# play = int (viewtime / timeLong)
+			# print (play)
+			#
+			# return play
+		'''
 
 if __name__ == '__main__':
 	g = GXGDData()
-	g.get_stb_paly_num(
+	res = g.get_stb_view_num(
 		areaCode = '-1' ,
 		channelCodes =  445,
 		date = '2020-09-01',
 		startTime = '00:00:00',
 		endTime = '00:50:00',
-
+		dateInterval = "f04",
+		indexName = "RTG000",
 	)
+	print (res)
 	# g.login()
 #
 #

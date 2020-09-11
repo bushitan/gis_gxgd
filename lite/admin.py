@@ -5,6 +5,10 @@ from .models import *
 import random
 from lib.gxgx_data import *
 import json
+
+from .action.episode_action import *
+action_episode = ActionEpisode()
+
 admin.site.site_header = u'广西广电网络频道分析平台'
 admin.site.site_title = u'广西广电网络'
 
@@ -34,46 +38,21 @@ admin.site.register(Channel,ChannelAdmin)
 
 class BroadcastAdmin(admin.ModelAdmin):
 
-    actions = ['add_episode']
+    actions = ['add_stb_arrive_count','add_stb_view_count']
 
-    # 添加剧集数据
-    def add_episode(self, request, queryset):
-        gxgd = GXGDData()
-
-        # rows_updated = queryset.update(status=3) # queryset参数为选中的Story对象
-        # message_bit = "%s 篇文章" % rows_updated
-        # episode_list = list( queryset[0].episode_list)
-        broadcast = queryset[0]
-        episode_list = json.loads (broadcast.episode_list)
-        address_list = Address.objects.filter( tag=0)
-        # print(address_list)
-        count = 0
-        for  episode in episode_list:
-            for address in address_list:
-                print ( episode)
-                print ( episode['start_time'])
-                print ( address.area_code)
-                uv = gxgd.get_stb_paly_num(
-                    areaCode = address.area_code ,
-                    channelCodes =  445,
-                    date = '2020-09-01',
-                    startTime =episode['start_time'],
-                    endTime = episode['end_time'],
-                )
-                e = Episode(
-                    broadcast = broadcast,
-                    address = address,
-                    name =  episode['name'],
-                    code =  episode['code'],
-                    start_time ="%s %s" %( episode['date'] , episode['start_time'] ),
-                    end_time ="%s %s" %( episode['date'] , episode['end_time'] ) ,
-                    uv = uv
-                    # uv = 1
-                )
-                e.save()
-                count = count + 1
+    # 机顶盒到达数
+    def add_stb_arrive_count(self, request, queryset):
+        count = action_episode.get_stb_arrive_count(queryset[0])
         self.message_user(request, "已经添加多少条数据。 %s." % count)
-    add_episode.short_description = u'添加剧集数据'
+    add_stb_arrive_count.short_description = u'添加剧集顶盒数到达数'
+
+    # 收视机顶盒数
+    def add_stb_view_count(self, request, queryset):
+        count = action_episode.get_stb_view_count(queryset[0])
+        self.message_user(request, "已经添加多少条数据。 %s." % count)
+    add_stb_view_count.short_description = u'添加剧集收视机顶盒数'
+
+
 
 admin.site.register(Broadcast,BroadcastAdmin)
 
