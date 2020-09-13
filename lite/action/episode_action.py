@@ -13,6 +13,11 @@ class ActionEpisode():
 	def getSheng(self):
 		pass
 
+	# 获取频道的名字
+	def getName(self,broadcast_id):
+		broadcast = Broadcast.objects.get(id = broadcast_id)
+		return broadcast.channel.name ,broadcast.name
+
 	# method 根据节目，获取各个地区数据
 	def getCityCount(self,broadcast_id=2):
 		# return Address.objects.filter(tag = 0)
@@ -38,7 +43,14 @@ class ActionEpisode():
 		return _address_data ,_max , _min
 		# pass
 
-	# method 根据节目，获取各个地区数据
+
+	'''
+	.	@method 根据节目，获取各个地区数据
+		@:return
+		 	episode_list 节目列表，做header用
+		 	_dict	腾讯云API数据字典
+		 	filter_max 热力图最大值
+	'''
 	def getCityList(self,broadcast_id=2):
 		# return Address.objects.filter(tag = 0)
 		broadcast = Broadcast.objects.get(id = broadcast_id)
@@ -46,19 +58,29 @@ class ActionEpisode():
 		episode_list = json.loads( broadcast.episode_list)
 
 		_dict = {}
+		_max = 0
 		for e in episode_list:
 			filter = Episode.objects.filter(broadcast_id = broadcast_id, code = e['code'])
-			_dict[e['code']] = self._filter_2_list(filter)
-		return episode_list,_dict
+			_dict[e['code']], filter_max  = self._filter_2_list(filter)
+			if _max < filter_max:
+				_max = filter_max
+			# if _min > filter_min:
+			# 	_min = filter_min
+
+		return episode_list,_dict, filter_max #,filter_min
 
 	def _filter_2_list(self,filter):
 		_list = []
+		_max = 0
 		for i in filter:
 			_list.append({
 				"count":i.uv,
 				"lat":i.address.latitude,"lng":i.address.longitude
 			})
-		return _list
+			_count = i.uv
+			if _max < _count:
+				_max = _count
+		return _list,_max
 
 	'''
 		@method 顶盒数到达数

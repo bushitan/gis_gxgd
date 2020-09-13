@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>湖南卫视</title>
+     <link rel="stylesheet" href="/static/css/main.css">
+     <link rel="stylesheet" href="/static/css/icon.css">
 </head>
 <script charset="utf-8"
     src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&libraries=visualization"></script>
@@ -19,33 +21,87 @@
 
     #container {
         width: 100%;
-        height: 100%;
+        height: calc(90vh - 116px);
     }
 </style>
 
 <body onload="initMap()">
-{#{{ gis }}#}
-{#{{ gis_list }}#}
- {% for e in episode_list %}
-    <span onclick="clickEpisode({{ e.code }})">{{ e.name }}</span>
-{% endfor %}
 
-    <input type="button" value="自动" onclick="auto()"></input>
-    当前第：<span id='step'></span>集
+    <div class="padding flex justify-between"  >
+        <div>
+            <span class="text-xxl text-bold margin-right" >节目收视率分析系统</span>
+            <span class="margin-right">|</span>
+            <span class="text-lg text-bold margin-right" >{{ channel_name }}</span>
+            <span class="margin-right">|</span>
+            <span class="margin-right">{{ broadcast_name }}</span>
+
+        </div>
+        <div>
+            <span class="margin-right">
+                当前第：<span id='step'></span>集
+            </span>
+
+            <div class="cu-btn round bg-yellow padding text-white" onclick="auto()">数据自动展示</div>
+        {#    <input class="cu-btn round" type="button" value="自动" onclick="auto()"></input>#}
+
+        </div>
+
+    </div>
+
+
+    <div class="bg-white padding" >
+        <div class="cu-steps flex-wrap">
+            {% for e in episode_list %}
+                <div class="cu-item " id="{{ e.code }}_bg" onclick="clickEpisode({{ e.code }})">
+                    <span class="num err"  id="{{ e.code }}_icon"></span> <div class="flex flex-direction">{{  e.name}}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
     <div id="container"></div>
+    <div class="text-sm  text-center padding"> ©频道经营部【信息反馈联系方式：韦丰 15277126678】 </div>
 
     <script>
         var heat;
-	var step = 0;
+	    var step = 0;
         var episode_dict ={%autoescape off  %}{{ episode_dict }}{% endautoescape %}
 
-
+        // 点击图标
         function clickEpisode(code){
+            clearIcon()
+            addIcon(code)
             console.log(code)
             heat.setData(episode_dict[code]);//设置数据
         }
 
+        function clearIcon(){
+            var arr = document.getElementsByClassName("cu-item")
+            console.log(arr)
+            for( var i=0;i<arr.length ;i++){
+                arr[i].classList.remove("text-blue")
+                arr[i].classList.add("text-gray")
+            }
 
+            var iconArr = document.getElementsByClassName("num")
+            console.log(arr)
+            for( var i=0;i<iconArr.length ;i++){
+                iconArr[i].classList.remove("success")
+                iconArr[i].classList.add("err")
+            }
+        }
+
+        function addIcon(code){
+             var bg = document.getElementById(code + "_bg")
+             var icon = document.getElementById(code + "_icon")
+            bg.classList.remove("text-gray")
+            bg.classList.add("text-blue")
+            icon.classList.remove("err")
+            icon.classList.add("success")
+        }
+
+    // 自动播放
 	function auto(){
 
 		var episode_list = [
@@ -53,16 +109,15 @@
     				{ code:{{ e.code }} ,name:'{{ e.name }}' },	
 			{% endfor %}
 		]
-	    //var episode_list = {%autoescape off  %}{{ episode_list }}{% endautoescape %}
    	    step = 0;
 	    var interval = setInterval(function(){
-	        if(step<episode_list.length-1){
-			clickEpisode(episode_list[step].code)	
-			document.getElementById("step").innerHTML = step + 1	
-			step++;
-		} else {
-			clearInterval(interval)
-		}
+	        if(step<episode_list.length){
+                clickEpisode(episode_list[step].code)
+                document.getElementById("step").innerHTML = step + 1
+                step++;
+            } else {
+                clearInterval(interval)
+            }
  	    },800)
 	}
 
@@ -81,7 +136,9 @@
 
             //初始化热力图并添加至map图层
             heat = new TMap.visualization.Heat({
-                max: 44299,  // 热力最强阈值
+{#                max: 44299,  // 热力最强阈值#}
+                max: {{ max }},  // 热力最强阈值
+{#                max: 400,  // 热力最强阈值#}
                 min: 0, // 热力最弱阈值
                 height:400, // 峰值高度
                 radius: 40, // 最大辐射半径
@@ -149,6 +206,9 @@
 {#    {% endfor %}#}
 {#]#}
 
+{# {% for e in episode_list %}#}
+{#    <span onclick="clickEpisode({{ e.code }})">{{ e.name }}</span>#}
+{#{% endfor %}#}
 {# var normalData =[#}
 {#{"count":0.0665,"lat":22.807833,"lng":108.311462},#}
 {#{"count":0.1175,"lat":24.327077,"lng":109.401855},#}
