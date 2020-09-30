@@ -27,7 +27,7 @@ SECRET_KEY = 'slg3bk5_2l8bk3bkxq%n3ewg3=+8trpn!i@3q-^rd+)*0r4xtq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -106,7 +106,32 @@ USE_TZ = False #计算机所在地时间#
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\','/')
+ 
+STATICFILES_DIRS =(
+  ("css", os.path.join(STATIC_ROOT,'css').replace('\\','/')),
+  ("js", os.path.join(STATIC_ROOT,'js').replace('\\','/')),
+)
+ 
+STATIC_URL = '/static/'
+ 
+TEMPLATES = [
+  {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [],
+    #'DIRS':TEMPLATE_DIRS,
+    'APP_DIRS': True,
+    'OPTIONS': {
+      'context_processors': [
+        'django.template.context_processors.debug',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
+        'django.contrib.messages.context_processors.messages',
+        'django.core.context_processors.static',
+      ],
+    },
+  },
+]
 # log配置
 LOG_FILE = "./all.log"
 
