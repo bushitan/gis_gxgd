@@ -23,6 +23,7 @@ admin.site.site_title = u'广西广电网络'
 
 
 class UserAdmin(admin.ModelAdmin):
+    list_display = ('id','name','channel')
     raw_id_fields = ('channel',)
     filter_horizontal = ('broadcast',)
     pass
