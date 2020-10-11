@@ -28,7 +28,14 @@ class Base(models.Model):
 
 class User(Base):
     # models.ImageField()
+    channel = models.ForeignKey('Channel', verbose_name=u'所属卫视频道',null=True,blank=True)
+    broadcast = models.ManyToManyField('Broadcast', verbose_name=u'可查看的节目',null=True,blank=True)
+
+
     logo = models.CharField(max_length=300, verbose_name=u'logo',default="",null=True,blank=True)
+    username =  models.CharField(max_length=32, verbose_name=u'账号',null=True,blank=True)
+    password =  models.CharField(max_length=32, verbose_name=u'密码',null=True,blank=True)
+
     nick_name =  models.CharField(max_length=100, verbose_name=u'昵称',null=True,blank=True)
     wx_id =  models.CharField(max_length=100, verbose_name=u'微信id',null=True,blank=True)
 

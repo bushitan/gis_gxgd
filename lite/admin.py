@@ -6,7 +6,7 @@ import random
 from lib.gxgx_data import *
 import json
 
-from .action.episode_action import *
+from .action.action_episode import *
 action_episode = ActionEpisode()
 
 admin.site.site_header = u'广西广电网络频道分析平台'
@@ -23,6 +23,8 @@ admin.site.site_title = u'广西广电网络'
 
 
 class UserAdmin(admin.ModelAdmin):
+    raw_id_fields = ('channel',)
+    filter_horizontal = ('broadcast',)
     pass
 admin.site.register(User,UserAdmin)
 
