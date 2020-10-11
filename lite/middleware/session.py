@@ -18,6 +18,7 @@ class SessionMiddleware(object):
 		_uuid = ''
 		if request.method == 'GET':
 			_uuid = request.GET.get("uuid","")
+			return
 			# return
 		if request.method == 'POST':
 			_uuid = request.POST.get("uuid","")

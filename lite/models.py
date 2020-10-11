@@ -6,7 +6,7 @@ import django.utils.timezone as timezone
 def day_365_hence(): #集点默认365天有效期
     return timezone.now() + timezone.timedelta(days=365)
 import uuid
-import pymysql
+# import pymysql
 
 # 基础类 虚函数
 class Base(models.Model):
