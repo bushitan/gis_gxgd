@@ -12,23 +12,25 @@ class SessionMiddleware(object):
 		#有，则判断是否存在
 
 		# 如果为登陆，则不不需要验证
-		if request.path == u'/gis_gxgd/lite/gis/login/':
-			return
+		# if request.path == u'/gis/user/broadcast_list/':
+		# 	return
 
-		_uuid = ''
-		if request.method == 'GET':
-			_uuid = request.GET.get("uuid","")
-			return
-			# return
-		if request.method == 'POST':
+		# _uuid = ''
+		# if request.method == 'GET':
+		# 	_uuid = request.GET.get("uuid","")
+		# 	return
+		# 	# return
+		# if request.method == 'POST':
+
+		if request.path == u'/gis/user/broadcast_list/':
 			_uuid = request.POST.get("uuid","")
 
-		if  User.objects.filter( uuid = _uuid).exists() is False: #用户不存在
-				return HttpResponse( json.dumps({
-					"data":{},
-					"msg":"用户不存在",
-					"code":-1,
-				} ),content_type="application/json" )
+			if  User.objects.filter( uuid = _uuid).exists() is False: #用户不存在
+					return HttpResponse( json.dumps({
+						"data":{},
+						"msg":"用户不存在",
+						"code":-1,
+					} ),content_type="application/json" )
 		return
 
 
