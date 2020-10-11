@@ -79,6 +79,8 @@ class Broadcast(Base):
     channel = models.ForeignKey(Channel, verbose_name=u'所属频道',null=True,blank=True)
     episode_list = models.TextField(  verbose_name=u'剧集时间表',null=True,blank=True)
     tag =  models.IntegerField( verbose_name=u'节目标签',default=0)
+    desc = models.CharField(max_length=50, verbose_name=u'说明',null=True,blank=True,default='')
+    range_time = models.CharField(max_length=50, verbose_name=u'查询时间范围',null=True,blank=True,default='')
     class Meta:
         verbose_name_plural = verbose_name = u'2、节目'
     def __unicode__(self):

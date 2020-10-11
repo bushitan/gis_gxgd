@@ -22,7 +22,8 @@ class SessionMiddleware(object):
 		# 	# return
 		# if request.method == 'POST':
 
-		if request.path == u'/gis/user/broadcast_list/':
+		if request.path == u'/gis/user/broadcast_list/' or\
+		   request.path == u'/gis/hunan/':
 			_uuid = request.POST.get("uuid","")
 
 			if  User.objects.filter( uuid = _uuid).exists() is False: #用户不存在
