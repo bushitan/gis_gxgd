@@ -59,6 +59,7 @@ class ActionEpisode():
 
 		_dict = {}
 		_max = 0
+		filter_max = 0
 		for e in episode_list:
 			filter = Episode.objects.filter(broadcast_id = broadcast_id, code = e['code'])
 			_dict[e['code']], filter_max  = self._filter_2_list(filter)
@@ -83,6 +84,49 @@ class ActionEpisode():
 		return _list,_max
 
 
+#############获取收视率#################
+
+
+	'''
+	.	@method 根据节目，获取各个地区数据
+		@:return
+		 	episode_list 节目列表，做header用
+		 	_dict	腾讯云API数据字典
+		 	filter_max 热力图最大值
+	'''
+	def getRateCityList(self,broadcast_id=2):
+		# return Address.objects.filter(tag = 0)
+		broadcast = Broadcast.objects.get(id = broadcast_id)
+		# print( json.loads( broadcast.episode_list) )
+		episode_list = json.loads( broadcast.episode_list)
+
+		_dict = {}
+		_max = 0
+		filter_max = 0
+		for e in episode_list:
+			filter = Episode.objects.filter(broadcast_id = broadcast_id, code = e['code'])
+			_dict[e['code']], filter_max  = self._rate_filter_2_list(filter)
+			if _max < filter_max:
+				_max = filter_max
+			# if _min > filter_min:
+			# 	_min = filter_min
+
+		return episode_list,_dict, filter_max #,filter_min
+
+	def _rate_filter_2_list(self,filter):
+		_list = []
+		_max = 0
+		for i in filter:
+			_list.append({
+				"count":i.rate,
+				"lat":i.address.latitude,"lng":i.address.longitude
+			})
+			_count = i.rate
+			if _max < _count:
+				_max = _count
+		return _list,_max
+
+
 	'''
 		@method 1 获取节目收视率
 	'''
@@ -102,13 +146,13 @@ class ActionEpisode():
 					date =   episode['date'],
 					startTime =episode['start_time'],
 					endTime = episode['end_time'],
-					dateInterval = "f04",
-					indexName = episode['index_name'],
+					dateInterval = "f05",
+					indexName = broadcast.index_name,
 				)
 				# viewtime = res['contentList'][0]['valueList'][0]['viewtime']
 				# timeLong = res['contentList'][0]['valueList'][0]['timeLong']
 				# uv = int (viewtime / timeLong)
-				uv =  res['contentList'][0]['valueList'][0]['RTG']
+				rate =  res['contentList'][0]['valueList'][0]['RTG']
 				e = Episode(
 					broadcast = broadcast,
 					address = address,
@@ -116,7 +160,7 @@ class ActionEpisode():
 					code =  episode['code'],
 					start_time ="%s %s" %( episode['date'] , episode['start_time'] ),
 					end_time ="%s %s" %( episode['date'] , episode['end_time'] ) ,
-					uv = uv,
+					rate = rate,
 				)
 				e.save()
 				count = count + 1

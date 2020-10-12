@@ -17,6 +17,9 @@ class Index( ListView):
     def get_queryset(self):
         pass
 
+'''
+    @method 收视人数
+'''
 class Hunan( ListView):
     template_name = 'gis_hunan.html'
     context_object_name = 'article_list'
@@ -29,15 +32,36 @@ class Hunan( ListView):
         kwargs['gis'] = 123
         # kwargs['gis_list'] = [1,2,3]
         # address_list = Address.objects.filter(code=0)
-
         kwargs['channel_name'], kwargs['broadcast_name'] = action.episode.getName(self.broadcast_id)
-
         # kwargs['gis_list'], kwargs['max'], kwargs['min'] = action_episode.getCityCount(self.broadcast_id)
         kwargs['episode_list'],kwargs['episode_dict'] ,kwargs['max'] = action.episode.getCityList(self.broadcast_id)
         # print  (kwargs['gis_list'])
-
-
         return super(Hunan, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        pass
+
+
+'''
+    @method 收视率
+'''
+class Rate( ListView):
+    template_name = 'gis_rate.html'
+    context_object_name = 'article_list'
+
+    broadcast_id = ""
+    def get(self, request, *args, **kwargs):
+        self.broadcast_id = request.GET.get('broadcast_id',"")
+        return super(Rate, self).get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        # kwargs['gis'] = 123
+        # kwargs['gis_list'] = [1,2,3]
+        # address_list = Address.objects.filter(code=0)
+        kwargs['channel_name'], kwargs['broadcast_name'] = action.episode.getName(self.broadcast_id)
+        # kwargs['gis_list'], kwargs['max'], kwargs['min'] = action_episode.getCityCount(self.broadcast_id)
+        kwargs['episode_list'],kwargs['episode_dict'] ,kwargs['max'] = action.episode.getRateCityList(self.broadcast_id)
+        # print  (kwargs['gis_list'])
+        return super(Rate, self).get_context_data(**kwargs)
 
     def get_queryset(self):
         pass

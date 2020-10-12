@@ -32,6 +32,24 @@ class GXGDData():
 		# print(res)
 
 
+	'''
+		@method 收视率
+	'''
+	def get_stb_view_num(self,**kwargs):
+		url = 'http://10.1.42.51:18089/StarV2/live/getIndex.do'
+		data = {
+			'areaCode':kwargs['areaCode'] ,
+			'groupFlag': 'false',
+			'groupCode': 'GX001',
+			'channelCodes':kwargs['channelCodes'] ,
+			'dateRange':'%s:%s' % (kwargs['date'] ,kwargs['date'] ) ,# '2020-09-01:2020-09-01',
+			'timeRange':'%s-%s' % (kwargs['startTime'] ,kwargs['endTime'] ) ,# '00:00:00-23:59:59',
+			'dateInterval': kwargs['dateInterval'], #'f04', # f04按小时 ， f05 按天 ，f06按周，f07按月
+			'indexName':  kwargs['indexName'], #'RTG000', #'RTG000' 获取收视机顶盒数   'REACH000'顶盒数到达数
+			'currentPage': '1',
+		}
+		res = self._post( url , data)
+		return res
 
 	'''
 	# 获取收视机顶盒数

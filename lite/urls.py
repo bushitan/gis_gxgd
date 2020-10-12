@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^index/$', Index.as_view()),
 
     url(r'^gis/hunan/$', Hunan.as_view()),
+    url(r'^gis/rate/$', Rate.as_view()),
     url(r'^gis/login/$', UserLogin.as_view()), #登陆
     url(r'^gis/user/broadcast_list/$', UserGetBroadcastList.as_view()), #获取直播数据列表
 

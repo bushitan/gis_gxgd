@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>广西广电网络</title>
+     <link rel="stylesheet" href="/static/css/main.css">
+     <link rel="stylesheet" href="/static/css/icon.css">
+</head>
+<script charset="utf-8"
+    src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&libraries=visualization"></script>
+<style type="text/css">
+    html,
+    body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        background-color: #f1f1f1;
+    }
+
+    #container {
+        width: 100%;
+        height: calc(90vh - 116px);
+    }
+</style>
+
+<body onload="initMap()">
+
+    <div class="padding flex justify-between margin-top"  >
+        <div>
+            <span class="text-xxl text-bold margin-right" >卫视频道</span>
+            <span class="margin-right">|</span>
+            <span class="text-lg text-bold margin-right" >{{ channel_name }}</span>
+            <span class="margin-right">|</span>
+            <span class="margin-right">{{ broadcast_name }}</span>
+        </div>
+        <div class="text-center">
+            <span class="margin-right text-center">
+                当前第：<span id='step'></span>集
+            </span>
+            <div class="cu-btn round bg-yellow padding text-white" onclick="auto()">数据自动展示</div>
+        {#    <input class="cu-btn round" type="button" value="自动" onclick="auto()"></input>#}
+
+        </div>
+
+    </div>
+
+
+    <div class="bg-white padding-sm" >
+        <div class="cu-steps " style="overflow-X:scroll;height:95px;width:100%">
+            {% for e in episode_list %}
+                <div class="cu-item " id="{{ e.code }}_bg" onclick="clickEpisode({{ e.code }})" >
+                    <span class="num err"  id="{{ e.code }}_icon"></span> <div class="flex flex-direction">{{  e.name}}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div id="container"></div>
+    <div class="text-sm  text-center padding"> ©频道经营部【信息反馈联系方式：韦丰 15277126678】 </div>
+
+    <div style="height:60px"></div>
+    <script>
+        var heat;
+	    var step = 0;
+        var episode_dict ={%autoescape off  %}{{ episode_dict }}{% endautoescape %}
+
+        // 点击图标
+        function clickEpisode(code){
+            clearIcon()
+            addIcon(code)
+            console.log(code)
+            heat.setData(episode_dict[code]);//设置数据
+        }
+
+        function clearIcon(){
+            var arr = document.getElementsByClassName("cu-item")
+            console.log(arr)
+            for( var i=0;i<arr.length ;i++){
+                arr[i].classList.remove("text-blue")
+                arr[i].classList.add("text-gray")
+            }
+
+            var iconArr = document.getElementsByClassName("num")
+            console.log(arr)
+            for( var i=0;i<iconArr.length ;i++){
+                iconArr[i].classList.remove("success")
+                iconArr[i].classList.add("err")
+            }
+        }
+
+        function addIcon(code){
+             var bg = document.getElementById(code + "_bg")
+             var icon = document.getElementById(code + "_icon")
+            bg.classList.remove("text-gray")
+            bg.classList.add("text-blue")
+            icon.classList.remove("err")
+            icon.classList.add("success")
+        }
+
+    // 自动播放
+	function auto(){
+
+		var episode_list = [
+	 		{% for e in episode_list %}
+    				{ code:{{ e.code }} ,name:'{{ e.name }}' },	
+			{% endfor %}
+		]
+   	    step = 0;
+	    var interval = setInterval(function(){
+	        if(step<episode_list.length){
+                clickEpisode(episode_list[step].code)
+                document.getElementById("step").innerHTML = step + 1
+                step++;
+            } else {
+                clearInterval(interval)
+            }
+ 	    },800)
+	}
+
+
+
+        function initMap() {
+            var center = new TMap.LatLng(22.807833, 108.311462);
+
+            //初始化地图
+            var map = new TMap.Map("container", {
+                zoom: 7,//设置地图缩放级别
+                pitch: 45, // 设置地图俯仰角
+                center: center,//设置地图中心点坐标
+                mapStyleId: "style2" //个性化样式
+            });
+
+            //初始化热力图并添加至map图层
+            heat = new TMap.visualization.Heat({
+{#                max: 44299,  // 热力最强阈值#}
+                max: {{ max }},  // 热力最强阈值
+{#                max: 400,  // 热力最强阈值#}
+                min: 0, // 热力最弱阈值
+                height:400, // 峰值高度
+                radius: 40, // 最大辐射半径
+                gradientColor:{
+
+                        // 0: '#fdfa00',
+                    0: '#14de84',
+
+                     0.9: '#E05649',
+                     //0.4: '#14de84',
+                     //0.8: '#E9AB1D',
+                     //0.9: '#E9AB1D',
+                     //1: '#E05649'
+                }
+                })
+            .addTo(map)
+
+
+{#            //初始化热力图并添加至map图层#}
+{#            new TMap.visualization.Heat({#}
+{#                max: 2,  // 热力最强阈值#}
+{#                min: 0, // 热力最弱阈值#}
+{#                height: 400, // 峰值高度#}
+{#                radius: 40, // 最大辐射半径#}
+{#		gradientColor:{#}
+{#				// 0:'#ff0024'#}
+{#				0: '#fdfa00', #}
+{#			#}
+{#			#}
+{#			//0.4: '#14de84', #}
+{#			//0.8: '#E9AB1D', #}
+{#			//0.9: '#E9AB1D', #}
+{#			//1: '#E05649'#}
+{#		}#}
+{#            })#}
+{#            .addTo(map)#}
+{#            .setData(normalData);//设置数据#}
+
+	 // //初始化热力图并添加至map图层
+  //           new TMap.visualization.Heat({
+  //               max: 1300,  // 热力最强阈值
+  //               min: 0, // 热力最弱阈值
+  //               height: 400, // 峰值高度
+  //               radius: 40, // 最大辐射半径
+		// gradientColor:{
+		// 	0:'#ff0024'
+		// 	//0: '#13B06A', 
+		// 	//0.4: '#13B06A', 
+		// 	//0.8: '#E9AB1D', 
+		// 	//0.9: '#E9AB1D', 
+		// 	//1: '#E05649'
+		//     //0.6: "#e53390",
+  //                  // 0.8: "#e53390",
+  //                  // 0.9: "#ffc95a",
+		// }
+  //           })
+  //           .addTo(map)
+  //           .setData(hunanData );//设置数据
+        }
+
+{#    var betterData =#}
+{#[#}
+{#     {% for x in gis_list %}#}
+{#        {"count": {{ x.count }},"lat": {{ x.lat }},"lng": {{ x.lng }}},#}
+{#    {% endfor %}#}
+{#]#}
+
+{# {% for e in episode_list %}#}
+{#    <span onclick="clickEpisode({{ e.code }})">{{ e.name }}</span>#}
+{#{% endfor %}#}
+{# var normalData =[#}
+{#{"count":0.0665,"lat":22.807833,"lng":108.311462},#}
+{#{"count":0.1175,"lat":24.327077,"lng":109.401855},#}
+{#{"count":0.114,"lat":25.274504,"lng":110.302734},#}
+{#{"count":0.301,"lat":23.473324,"lng":111.291504},#}
+{#{"count":0.132,"lat":21.493964,"lng":109.105225},#}
+{#{"count":0.136,"lat":21.688057,"lng":108.358154},#}
+{#{"count":0.189,"lat":21.983801,"lng":108.654785},#}
+{#{"count":0.252,"lat":23.120154,"lng":109.610596},#}
+{#{"count":0.2695,"lat":22.66471,"lng":110.181885},#}
+{#{"count":0.176,"lat":23.895883,"lng":106.611328},#}
+{#{"count":0.4495,"lat":24.397133,"lng":111.566162},#}
+{#{"count":0.1495,"lat":24.706915,"lng":108.094482},#}
+{#{"count":0.1735,"lat":23.735069,"lng":109.226074},#}
+{#{"count":0.3555,"lat":22.390714,"lng":107.380371},#}
+{##}
+{#]#}
+    </script>
+</body>
+
+</html>
+
