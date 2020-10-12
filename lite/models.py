@@ -69,18 +69,35 @@ class Address(Base):
 # 频道
 class Channel(Base):
     # phone = models.CharField(max_length=40, verbose_name=u'电话',null=True,blank=True)
+    code =  models.IntegerField( verbose_name=u'频道代码',default=0)
     tag =  models.IntegerField( verbose_name=u'频道标签',default=0)
     class Meta:
         verbose_name_plural = verbose_name = u'1、频道'
     def __unicode__(self):
         return '%s' % (self.name)
+
 # 节目
+INDEX_NAME_STB_RATE = 'RTG'
+INDEX_NAME_STB_UV = 'RTG000'
+INDEX_NAME_ALL_RATE = 'SHR'
+INDEX_NAME_STB_TIME = 'AUDDURATION'
+INDEX_NAME_STB_TIME_AVE = 'TAUD'
+# 收集数据的模式
+INDEX_NAME_TYPE = {
+	INDEX_NAME_STB_RATE:u"收视率",
+	INDEX_NAME_STB_UV:u"收视机顶盒数",
+	INDEX_NAME_ALL_RATE:u"市场占有率",
+	INDEX_NAME_STB_TIME:u"收视时长",
+    INDEX_NAME_STB_TIME_AVE:u"平均收视时长",
+}
 class Broadcast(Base):
     channel = models.ForeignKey(Channel, verbose_name=u'所属频道',null=True,blank=True)
     episode_list = models.TextField(  verbose_name=u'剧集时间表',null=True,blank=True)
     tag =  models.IntegerField( verbose_name=u'节目标签',default=0)
     desc = models.CharField(max_length=50, verbose_name=u'说明',null=True,blank=True,default='')
     range_time = models.CharField(max_length=50, verbose_name=u'查询时间范围',null=True,blank=True,default='')
+    index_name = models.CharField(max_length=32,verbose_name=u'大数据分析类型',default=INDEX_NAME_STB_RATE,choices=INDEX_NAME_TYPE.items())
+    # index_name = models.IntegerField( verbose_name=u'节目标签',default=0,)
     class Meta:
         verbose_name_plural = verbose_name = u'2、节目'
     def __unicode__(self):

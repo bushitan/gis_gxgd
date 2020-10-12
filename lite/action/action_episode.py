@@ -82,12 +82,53 @@ class ActionEpisode():
 				_max = _count
 		return _list,_max
 
+
+	'''
+		@method 1 获取节目收视率
+	'''
+	def get_rate(self,broadcast):
+		gxgd = GXGDData() #获取大数据数据
+		# 数据存储
+		broadcast = broadcast
+		channel = broadcast.channel
+		episode_list = json.loads (broadcast.episode_list)
+		address_list = Address.objects.filter( tag=0)
+		count = 0
+		for  episode in episode_list:
+			for address in address_list:
+				res = gxgd.get_stb_view_num(
+					areaCode = address.area_code ,
+					channelCodes =  channel.code,
+					date =   episode['date'],
+					startTime =episode['start_time'],
+					endTime = episode['end_time'],
+					dateInterval = "f04",
+					indexName = episode['index_name'],
+				)
+				# viewtime = res['contentList'][0]['valueList'][0]['viewtime']
+				# timeLong = res['contentList'][0]['valueList'][0]['timeLong']
+				# uv = int (viewtime / timeLong)
+				uv =  res['contentList'][0]['valueList'][0]['RTG']
+				e = Episode(
+					broadcast = broadcast,
+					address = address,
+					name =  episode['name'],
+					code =  episode['code'],
+					start_time ="%s %s" %( episode['date'] , episode['start_time'] ),
+					end_time ="%s %s" %( episode['date'] , episode['end_time'] ) ,
+					uv = uv,
+				)
+				e.save()
+				count = count + 1
+		return count
+
 	'''
 		@method 顶盒数到达数
 	'''
 	def get_stb_arrive_count(self,broadcast):
 		gxgd = GXGDData() #获取大数据数据
 		broadcast = broadcast
+		channel = broadcast.channel
 		episode_list = json.loads (broadcast.episode_list)
 		address_list = Address.objects.filter( tag=0)
 		count = 0
@@ -98,7 +139,7 @@ class ActionEpisode():
 				print ( address.area_code)
 				res = gxgd.get_stb_view_num(
 					areaCode = address.area_code ,
-					channelCodes =  445,
+					channelCodes =  channel.code,
 					date =   episode['date'],
 					startTime =episode['start_time'],
 					endTime = episode['end_time'],
@@ -128,6 +169,7 @@ class ActionEpisode():
 
 		# 数据存储
 		broadcast = broadcast
+		channel = broadcast.channel
 		episode_list = json.loads (broadcast.episode_list)
 		address_list = Address.objects.filter( tag=0)
 		count = 0
@@ -138,7 +180,7 @@ class ActionEpisode():
 				print ( address.area_code)
 				res = gxgd.get_stb_view_num(
 					areaCode = address.area_code ,
-					channelCodes =  445,
+					channelCodes =  channel.code,
 					date =   episode['date'],
 					startTime =episode['start_time'],
 					endTime = episode['end_time'],

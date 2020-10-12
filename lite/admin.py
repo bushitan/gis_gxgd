@@ -23,10 +23,10 @@ admin.site.site_title = u'广西广电网络'
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','name','channel')
+    list_display = ('id','name','channel','username','password',)
     raw_id_fields = ('channel',)
     filter_horizontal = ('broadcast',)
-    pass
+    list_editable = ( 'username','password',)
 admin.site.register(User,UserAdmin)
 
 class AddressAdmin(admin.ModelAdmin):
@@ -41,7 +41,13 @@ admin.site.register(Channel,ChannelAdmin)
 
 class BroadcastAdmin(admin.ModelAdmin):
 
-    actions = ['add_stb_arrive_count','add_stb_view_count']
+    actions = ['add_rate''add_stb_arrive_count','add_stb_view_count']
+
+    # 节目收视率
+    def add_rate(self, request, queryset):
+        count = action_episode.get_rate(queryset[0])
+        self.message_user(request, "已经添加多少条数据。 %s." % count)
+    add_rate.short_description = u'添加剧集顶盒数到达数'
 
     # 机顶盒到达数
     def add_stb_arrive_count(self, request, queryset):
